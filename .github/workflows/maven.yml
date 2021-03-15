@@ -18,4 +18,4 @@ jobs:
       with:
         java-version: 11.0.4
     - name: Maven deploy
-      run: mvn -B clean deploy -DskipTests
+      run: ./mvnw spring-boot:run
