@@ -40,7 +40,7 @@
     </wsdl:binding>
     <wsdl:service name="OrderValidityindicatorService">
         <wsdl:port binding="tns:OrderValidityindicatorSoap11" name="OrderValidityindicatorSoap11">
-            <soap:address location="http://localhost:8082/ws"/>
+            <soap:address location="http://ts-order-validation.herokuapp.com/ws"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
