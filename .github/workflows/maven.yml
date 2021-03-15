@@ -1,4 +1,3 @@
-
 on:
   push:
     branches: [ main ]
@@ -13,7 +12,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Java CI with Maven
-    
-      uses: actions/setup-java@v1
+      uses: AkhileshNS/heroku-deploy@v3.12.12
       with:
-        java-version: 11.0.4
+        # Used for authentication. You can find it in your heroku homepage account settings
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        # Email from Heroku Account
+        heroku_email: ${{secrets.HEROKU_EMAIL}}
+        # The appname to use for deploying/updating
+        heroku_app_name: ${{secrets.HEROKU_APP}}
