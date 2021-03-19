@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OrderController {
+
     @Autowired
     private SoapClient client;
 
     @PostMapping("/submitorder")
-    public Acknowledgement invokeSoapClientToSubmitClientOrder(@RequestBody OrderRequest request) {
+    public Acknowledgement invokeSoapClientToSubmitClientOrder(@RequestBody(required = true) OrderRequest request) {
+        System.out.println(request.toString());
         return client.submitOrder(request);
     }
 }
