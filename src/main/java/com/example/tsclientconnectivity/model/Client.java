@@ -5,54 +5,79 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
 
 
 @Data
-//@Table(	name = "clients",
-//        uniqueConstraints = {
-//                @UniqueConstraint(columnNames = "username"),
-//                @UniqueConstraint(columnNames = "email")
-//        })
+@Table(name = "clients",
+        uniqueConstraints = {@UniqueConstraint(columnNames = "email") })
 @Entity
-public class Client {
+@NoArgsConstructor
+@Getter @Setter
+public class Client implements UserDetails {
 
     @NotNull
     @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter
     private long Id;
-    @Getter @Setter
     private String fname;
-    @Getter @Setter
     private String lname;
-    @Getter @Setter
     private String email;
-    @Getter @Setter
-    private String phonenumber;
-    @Getter @Setter
+    @Column(name = "phoneNumber")
+    private String phoneNumber;
     private String password;
-    @Getter @Setter
     private boolean isAdmin;
-    @Getter @Setter
     private double accountBalance;
-    @Getter @Setter @Column(name = "portfolioId")
+    @Column(name = "portfolioId")
     private long portfolioId;
 
 
-    public Client(long id,String fname,String lname,String email,
+    public Client(String fname,String lname,String email,
                   String phonenumber, String password, boolean isAdmin){
         this.lname=lname;
         this.fname=fname;
         this.password=password;
-        this.phonenumber=phonenumber;
+        this.phoneNumber=phonenumber;
         this.isAdmin=isAdmin;
         this.email=email;
         accountBalance=10000;
 
     }
 
-    public Client(){
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority grantedAuthority=new SimpleGrantedAuthority("client");
+        return Collections.singletonList(grantedAuthority);
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

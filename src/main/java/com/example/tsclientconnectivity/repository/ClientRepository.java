@@ -6,11 +6,19 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+import java.util.Optional;
+
 
 @Repository
+
 public interface ClientRepository extends CrudRepository<Client,Long> {
 
     @Query
-    Client findByEmail(@Param("email")String email);
+    Optional<Client> findByEmail(@Param("email")String email);
+
+
+    @Query
+    Boolean existsByEmail(@Param("email")String email);
 
 }

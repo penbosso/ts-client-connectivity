@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity @Data @NoArgsConstructor
 public class Portfolio {
-    @Getter   @Setter
+
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long Id;
     @Getter @Setter

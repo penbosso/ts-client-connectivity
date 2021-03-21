@@ -4,8 +4,8 @@ import com.example.tsclientconnectivity.model.Client;
 import com.example.tsclientconnectivity.model.Portfolio;
 import com.example.tsclientconnectivity.repository.ClientRepository;
 import com.example.tsclientconnectivity.repository.PortfolioRepository;
-import com.example.tsclientconnectivity.viewmodel.ClientLoginViewModel;
-import com.example.tsclientconnectivity.viewmodel.ClientRegisterViewModel;
+import com.example.tsclientconnectivity.viewmodel.ClientLoginRequest;
+import com.example.tsclientconnectivity.viewmodel.ClientRegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class AccountController {
     PortfolioRepository portfolioRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody ClientLoginViewModel viewModel){
+    public ResponseEntity<Object> login(@RequestBody ClientLoginRequest viewModel){
        // if(viewModel == null) return ResponseEntity.badRequest().body("empty body");
         
         System.out.println(viewModel.getEmail() + " " + viewModel.getPassword());
@@ -30,7 +30,7 @@ public class AccountController {
     
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody ClientRegisterViewModel viewModel){
+    public ResponseEntity<Object> register(@RequestBody ClientRegisterRequest viewModel){
         if(viewModel == null) return ResponseEntity.badRequest().build();
         Client client= new Client();
         client.setEmail(viewModel.getEmail());
@@ -47,7 +47,7 @@ public class AccountController {
         //ToDo:Log activity with reporting service via post request(param [(clientId, fullName, action=registered, dataTime)])
         System.out.println(viewModel.getEmail() + " " + viewModel.getPassword());
         var headers=new HttpHeaders();
-        headers.set("access_token","eyndsjbfdfjd1651320");
+        headers.set("auth_token","eyndsjbfdfjd1651320");
         return ResponseEntity.ok().headers(headers).build();
     }
 

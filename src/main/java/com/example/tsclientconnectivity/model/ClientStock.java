@@ -8,8 +8,7 @@ import javax.persistence.*;
 import javax.persistence.Column;
 
 public class ClientStock {
-    @Getter
-    @Setter @Column(name = "stockId")
+     @Column(name = "stockId")
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long stockId;
     @Getter   @Setter
