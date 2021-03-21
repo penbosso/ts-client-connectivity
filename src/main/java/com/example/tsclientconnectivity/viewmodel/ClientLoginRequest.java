@@ -8,4 +8,8 @@ public class ClientLoginRequest {
 
     private String email;
     private String password;
+
+   public boolean checkIfNull(){
+       return email.isBlank() || password.isBlank();
+   }
 }

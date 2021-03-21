@@ -45,7 +45,7 @@ public class Client implements UserDetails {
         this.phoneNumber=phonenumber;
         this.isAdmin=isAdmin;
         this.email=email;
-        accountBalance=10000;
+       // accountBalance=10000;
 
     }
 
@@ -63,17 +63,17 @@ public class Client implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
