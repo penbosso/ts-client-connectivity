@@ -14,10 +14,19 @@ public class OrderController {
 
     @Autowired
     private SoapClient client;
+    //Authentication auth = SecurityContextHolder.getContext().getAuthentication()
 
+    //create order
     @PostMapping("/submitorder")
     public Acknowledgement invokeSoapClientToSubmitClientOrder(@RequestBody(required = true) OrderRequest request) {
         System.out.println(request.toString());
         return client.submitOrder(request);
     }
+
+    //get details about an order
+    //get all orders{open || otherwise}
+    //@PostMapping
+    //public Respo
+    //cancel order
+    //update order
 }

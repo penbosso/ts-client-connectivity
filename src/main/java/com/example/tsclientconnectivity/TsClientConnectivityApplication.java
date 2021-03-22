@@ -18,6 +18,7 @@ public class TsClientConnectivityApplication {
 
 		public static void main(String[] args) {
 		SpringApplication.run(TsClientConnectivityApplication.class, args);
+			System.out.println("Fuckkkkk");
 	}
 
 }

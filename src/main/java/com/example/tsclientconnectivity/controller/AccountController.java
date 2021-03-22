@@ -1,6 +1,6 @@
 package com.example.tsclientconnectivity.controller;
 
-import com.example.tsclientconnectivity.CustomControllerResponse.MessageResponse;
+import com.example.tsclientconnectivity.customResponse.MessageResponse;
 import com.example.tsclientconnectivity.config.jwt.JwtUtility;
 import com.example.tsclientconnectivity.model.Client;
 import com.example.tsclientconnectivity.model.Portfolio;
@@ -11,7 +11,6 @@ import com.example.tsclientconnectivity.repository.TradeAccountRepository;
 import com.example.tsclientconnectivity.viewmodel.ClientLoginRequest;
 import com.example.tsclientconnectivity.viewmodel.ClientRegisterRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,12 +18,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 //import javax.validation.Valid;
 
 @RestController
@@ -81,9 +78,17 @@ public class AccountController {
         tradeAccount.setBalance(6000);;
         tradeAccount.setUserId(dbClient.getId());
         tradeAccountRepository.save(tradeAccount);
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(viewModel.getEmail(), viewModel.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+        Client userDetails = (Client) authentication.getPrincipal();
+        var headers=new HttpHeaders();
+        headers.set("auth_token",jwt);
         //ToDo:Log activity with reporting service via post request(param [(clientId, fullName, action=registered, dataTime)])
 
-        return ResponseEntity.ok().body(new MessageResponse("Registration Successful"));
+        return ResponseEntity.ok().headers(headers).body(new MessageResponse("Registration Successful"));
     }
 
 }

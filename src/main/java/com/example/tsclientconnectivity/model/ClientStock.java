@@ -2,11 +2,11 @@ package com.example.tsclientconnectivity.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.apachecommons.CommonsLog;
 import javax.persistence.*;
 
 import javax.persistence.Column;
 
+//This is what the client owns in our database
 public class ClientStock {
      @Column(name = "stockId")
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
