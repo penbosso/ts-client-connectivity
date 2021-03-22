@@ -9,7 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity @Data
-public class Account {
+public class TradeAccount {
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long Id;
     @Getter

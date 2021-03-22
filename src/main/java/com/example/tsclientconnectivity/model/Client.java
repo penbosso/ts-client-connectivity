@@ -32,7 +32,6 @@ public class Client implements UserDetails {
     private String phoneNumber;
     private String password;
     private boolean isAdmin;
-    private double accountBalance;
     @Column(name = "portfolioId")
     private long portfolioId;
 
