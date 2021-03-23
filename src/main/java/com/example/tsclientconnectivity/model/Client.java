@@ -32,8 +32,8 @@ public class Client implements UserDetails {
     private String phoneNumber;
     private String password;
     private boolean isAdmin;
-    @Column(name = "portfolioId")
-    private long portfolioId;
+//    @Column(name = "portfolioId")
+//    private long portfolioId;
 
 
     public Client(String fname,String lname,String email,
