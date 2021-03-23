@@ -49,7 +49,7 @@ public class AccountController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
-        Client userDetails = (Client) authentication.getPrincipal();
+       // Client userDetails = (Client) authentication.getPrincipal();
         var headers=new HttpHeaders();
         headers.set("auth_token",jwt);
         System.out.println(viewModel.getEmail() + " " + viewModel.getPassword());
@@ -69,6 +69,7 @@ public class AccountController {
         client.setEmail(viewModel.getEmail());
         client.setFname(viewModel.getFname());
         client.setLname(viewModel.getLname());
+        client.setPhoneNumber(viewModel.getPhonenumber());
         client.setPassword(encoder.encode(viewModel.getPassword()));
         //create a default portfolio,and pass the id to the client
 
@@ -84,7 +85,7 @@ public class AccountController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
-        Client userDetails = (Client) authentication.getPrincipal();
+       // Client userDetails = (Client) authentication.getPrincipal();
         var headers=new HttpHeaders();
         headers.set("auth_token",jwt);
         //ToDo:Log activity with reporting service via post request(param [(clientId, fullName, action=registered, dataTime)])

@@ -4,6 +4,8 @@ import com.example.tsclientconnectivity.repository.PortfolioRepository;
 import com.example.tsclientconnectivity.viewmodel.PortfolioRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 public class PortfolioController {
     
     private final PortfolioRepository portfolioRepository;
-    
+    private final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    //var userId=((Client)auth.getPrincipal()).getId();
     @GetMapping()
     public ResponseEntity<Object> portfolio(){
         
