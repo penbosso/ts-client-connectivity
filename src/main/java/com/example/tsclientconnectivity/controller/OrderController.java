@@ -27,6 +27,7 @@ public class OrderController {
     @PostMapping()
     public Acknowledgement invokeSoapClientToSubmitClientOrder(@RequestBody(required = true) OrderRequest request) {
        // System.out.println(request.toString());
+        // TODO://report to reporting service
         return client.submitOrder(request);
     }
 
@@ -52,6 +53,8 @@ public class OrderController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var userId=((Client)auth.getPrincipal()).getId();
         //some logic
+
+        // TODO://report to reportng service
         return ResponseEntity.ok().build();
     }
     //update order
@@ -63,6 +66,7 @@ public class OrderController {
         var userId=((Client)auth.getPrincipal()).getId();
 
         //some logic
+        // TODO://report to reportng service
         return ResponseEntity.ok(request);
     }
 }

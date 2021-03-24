@@ -16,11 +16,12 @@ public class TradeAccountController {
     @GetMapping("/{clientId}")
     public ResponseEntity<Object> getBalance(@PathVariable("clientId")Long clientId){
         if(clientId == 0L) return ResponseEntity.badRequest().build();
-        if((tradeAccountRepository.findByClientId(clientId)).isEmpty()) return ResponseEntity.notFound().build();
+        var balance=(tradeAccountRepository.findByClientId(clientId));
+        if(balance.isEmpty()) return ResponseEntity.notFound().build();
 
-        var balance=(tradeAccountRepository.findByClientId(clientId)).get().getBalance();
-        return ResponseEntity.ok(new BalanceResponse(balance));
+        return ResponseEntity.ok(new BalanceResponse(balance.get().getBalance()));
 
     }
-    
+
+
 }

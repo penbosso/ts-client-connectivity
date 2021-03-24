@@ -41,6 +41,7 @@ public class PortfolioController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var userId=((Client)auth.getPrincipal()).getId();
         portfolioRepository.save(new Portfolio(viewModel.portfolioName,userId));
+        // TODO://report to reportng service
         return ResponseEntity.ok().build();
 
     }
