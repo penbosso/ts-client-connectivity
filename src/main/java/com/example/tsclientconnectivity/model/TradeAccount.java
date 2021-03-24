@@ -13,7 +13,7 @@ public class TradeAccount {
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long Id;
     @Getter
-    @Setter @Column(name="userId")
-    private long userId;
+    @Setter @Column(name="clientId")
+    private long clientId;
     private double balance;
 }

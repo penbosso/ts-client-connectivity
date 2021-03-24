@@ -1,5 +1,7 @@
 package com.example.tsclientconnectivity.controller;
 
+import com.example.tsclientconnectivity.model.Client;
+import com.example.tsclientconnectivity.model.Portfolio;
 import com.example.tsclientconnectivity.repository.PortfolioRepository;
 import com.example.tsclientconnectivity.viewmodel.PortfolioRequest;
 import lombok.AllArgsConstructor;
@@ -14,43 +16,56 @@ import org.springframework.web.bind.annotation.*;
 public class PortfolioController {
     
     private final PortfolioRepository portfolioRepository;
-    private final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     //var userId=((Client)auth.getPrincipal()).getId();
+
     @GetMapping()
-    public ResponseEntity<Object> portfolio(){
-        
-        return ResponseEntity.ok().body("thumbs");
+    public ResponseEntity<Object> allPortfolio(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var userId=((Client)auth.getPrincipal()).getId();
+        var repo=portfolioRepository.findAllByClientId(userId);
+        return ResponseEntity.ok().body(repo);
     
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Object> portfolio(@PathVariable(name = "id")String id){
+    public ResponseEntity<Object> getPortfolioById(@PathVariable(name = "id")Long id){
 
         return ResponseEntity.ok().body("thumbs get one "+id);
 
     }
 
     @PostMapping()
-    public ResponseEntity<Object> portfolio(@RequestBody PortfolioRequest viewModel){
+    public ResponseEntity<Object> createPortfolio(@RequestBody PortfolioRequest viewModel){
         if(viewModel.portfolioName.isBlank()) return ResponseEntity.badRequest().build();
-
-        return ResponseEntity.ok().body("post");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var userId=((Client)auth.getPrincipal()).getId();
+        portfolioRepository.save(new Portfolio(viewModel.portfolioName,userId));
+        return ResponseEntity.ok().build();
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> portfolio(@PathVariable(name = "id")String id,
+    public ResponseEntity<Object> updatePortfolio(@PathVariable(name = "id")Long id,
                                             @RequestBody PortfolioRequest viewModel){
 
-        if(id.isBlank() || viewModel.portfolioName.isBlank()) return ResponseEntity.badRequest().build();
-
-        return ResponseEntity.ok().body("put update");
+        if(id==0L || viewModel.portfolioName.isBlank()) return ResponseEntity.badRequest().build();
+        var data=portfolioRepository.findById(id);
+        if(data.isEmpty()) return ResponseEntity.notFound().build();
+        var newdata=data.get();
+        newdata.setName(viewModel.portfolioName);
+        portfolioRepository.save(newdata);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> portfolioDelete(@PathVariable(name = "id")String id){
-        if(id.isBlank()) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok().body("thumbs delete mapping  "+id);
+    public ResponseEntity<Object> portfolioDelete(@PathVariable(name = "id")Long id){
+        if(id==0L) return ResponseEntity.badRequest().build();
+        if (portfolioRepository.existsById(id)){
+            portfolioRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
 
     }
 

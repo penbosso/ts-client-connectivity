@@ -19,6 +19,5 @@ public class SoapClient {
       template = new WebServiceTemplate(marshaller);
       return (Acknowledgement) template.marshalSendAndReceive("http://ts-order-validation.herokuapp.com/ws", request);
 
-      
     }
 }

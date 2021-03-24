@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 
 @Data @Entity
 public class ClientOrder {
-
+    //i don't know what this table is
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long Id;
     @Column(name = "orderId")

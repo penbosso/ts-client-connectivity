@@ -21,12 +21,12 @@ public class OrderController {
 
     @Autowired
     private SoapClient client;
-    private final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    //private final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
     //create order
     @PostMapping()
     public Acknowledgement invokeSoapClientToSubmitClientOrder(@RequestBody(required = true) OrderRequest request) {
-        System.out.println(request.toString());
+       // System.out.println(request.toString());
         return client.submitOrder(request);
     }
 
@@ -41,6 +41,7 @@ public class OrderController {
     //get all orders{open || otherwise}
     @GetMapping()
     public ResponseEntity<Object> allOrders(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var userId=((Client)auth.getPrincipal()).getId();
         return ResponseEntity.ok().body(orderRepository.findAll());
     }
@@ -48,17 +49,20 @@ public class OrderController {
     @DeleteMapping("/{orderId")
     public ResponseEntity<Object> cancelOrder(@PathVariable(name = "orderId")Long orderId){
         if(!orderRepository.existsById(orderId)) return ResponseEntity.badRequest().build();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var userId=((Client)auth.getPrincipal()).getId();
         //some logic
         return ResponseEntity.ok().build();
     }
     //update order
     @PutMapping("/{orderId}")
-    public ResponseEntity<Object> updateOrder(@PathVariable(name = "orderId") Long orderId){
+    public ResponseEntity<Object> updateOrder(@PathVariable(name = "orderId") Long orderId,
+                                              @RequestBody OrderRequest request){
         if(!orderRepository.existsById(orderId)) return ResponseEntity.notFound().build();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var userId=((Client)auth.getPrincipal()).getId();
 
         //some logic
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(request);
     }
 }

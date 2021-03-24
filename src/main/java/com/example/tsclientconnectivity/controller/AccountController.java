@@ -71,14 +71,12 @@ public class AccountController {
         client.setLname(viewModel.getLname());
         client.setPhoneNumber(viewModel.getPhonenumber());
         client.setPassword(encoder.encode(viewModel.getPassword()));
-        //create a default portfolio,and pass the id to the client
 
-        //client.setPortfolioId(portfolio.getId());
         var dbClient=clientRepository.save(client);
         portfolioRepository.save(new Portfolio("Default",dbClient.getId()));
         TradeAccount tradeAccount=new TradeAccount();
         tradeAccount.setBalance(6000);;
-        tradeAccount.setUserId(dbClient.getId());
+        tradeAccount.setClientId(dbClient.getId());
         tradeAccountRepository.save(tradeAccount);
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(viewModel.getEmail(), viewModel.getPassword()));
