@@ -15,15 +15,13 @@ public class ClientStock {
      @Column(name = "stockId")
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long stockId;
-    @Getter   @Setter
     private String ticker;
-    @Getter   @Setter
     private double price;
-    @Getter   @Setter @Column(name = "stockQuantity")
+      @Column(name = "stockQuantity")
     private int stockQuantity;
-    @Getter   @Setter @Column(name = "clientId")
+      @Column(name = "clientId")
     private long clientId;
-    @Getter   @Setter @Column(name = "portfolioId")
+      @Column(name = "portfolioId")
     private long portfolioId;
 
 }

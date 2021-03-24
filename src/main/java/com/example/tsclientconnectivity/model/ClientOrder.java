@@ -11,9 +11,8 @@ import javax.persistence.Entity;
 public class ClientOrder {
     //i don't know what this table is
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long Id;
     @Column(name = "orderId")
-    private String orderId;
+    private Long orderId;
     @Getter @Setter
     private String side;
     @Getter @Setter
@@ -25,3 +24,5 @@ public class ClientOrder {
     @Getter @Setter @Column(name = "clientId")
     private long clientId;
 }
+//    @Column(name = "orderId")
+//    private String orderId;
