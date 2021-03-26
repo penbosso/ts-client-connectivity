@@ -3,15 +3,19 @@ package com.example.tsclientconnectivity.controller;
 import com.example.tsclientconnectivity.customResponse.MessageResponse;
 import com.example.tsclientconnectivity.config.jwt.JwtUtility;
 import com.example.tsclientconnectivity.model.Client;
+import com.example.tsclientconnectivity.model.ClientStock;
 import com.example.tsclientconnectivity.model.Portfolio;
 import com.example.tsclientconnectivity.model.TradeAccount;
 import com.example.tsclientconnectivity.reporting.ClientActivity;
 import com.example.tsclientconnectivity.repository.ClientRepository;
+import com.example.tsclientconnectivity.repository.ClientStockRepository;
 import com.example.tsclientconnectivity.repository.PortfolioRepository;
 import com.example.tsclientconnectivity.repository.TradeAccountRepository;
 import com.example.tsclientconnectivity.viewmodel.ClientLoginRequest;
 import com.example.tsclientconnectivity.viewmodel.ClientRegisterRequest;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,11 +38,13 @@ import org.springframework.web.client.RestTemplate;
 //@CrossOrigin(origins = "*", maxAge = 3600)
 public class AccountController {
 
+
+    private final String reportUrl="http://localhost:3005/client-report";
     private final RestTemplate restTemplate=new RestTemplate();
     ClientRepository clientRepository;
     PortfolioRepository portfolioRepository;
     TradeAccountRepository tradeAccountRepository;
-
+    ClientStockRepository clientStockRepository;
     AuthenticationManager authManager;
 
     PasswordEncoder encoder;
@@ -64,8 +70,9 @@ public class AccountController {
                         userDetails.getFname() + " " + userDetails.getLname(),
                         "Login"
                 ));
+
         ResponseEntity<ClientActivity> response = restTemplate
-                .exchange("http://localhost:3005/client-report", HttpMethod.POST, request, ClientActivity.class);
+                .exchange(reportUrl, HttpMethod.POST, request, ClientActivity.class);
         response.getStatusCodeValue();
         return ResponseEntity.ok().headers(headers).build();
     }
@@ -87,7 +94,7 @@ public class AccountController {
         client.setPassword(encoder.encode(viewModel.getPassword()));
 
         var dbClient=clientRepository.save(client);
-        portfolioRepository.save(new Portfolio("Default",dbClient.getId()));
+        var portClient=portfolioRepository.save(new Portfolio("Default",dbClient.getId()));
         TradeAccount tradeAccount=new TradeAccount();
         tradeAccount.setBalance(6000);;
         tradeAccount.setClientId(dbClient.getId());
@@ -98,6 +105,10 @@ public class AccountController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         Client userDetails = (Client) authentication.getPrincipal();
+        /**
+         * I need to give some stocks to clients when they sign up
+         */
+        clientStockRepository.saveAll(ClientStock.createDefaultStock(dbClient.getId(),portClient.getId()));
         var headers=new HttpHeaders();
         headers.set("auth_token",jwt);
         //ToDo:Log activity with reporting service via post request(param [(clientId, fullName, action=registered, dataTime)])
@@ -106,8 +117,9 @@ public class AccountController {
                         userDetails.getFname() + " " + userDetails.getLname(),
                         "Login"
                 ));
+
         ResponseEntity<ClientActivity> response = restTemplate
-                .exchange("http://localhost:3005/client-report", HttpMethod.POST, request, ClientActivity.class);
+                .exchange(reportUrl, HttpMethod.POST, request, ClientActivity.class);
         response.getStatusCodeValue();
         return ResponseEntity.ok().headers(headers).body(new MessageResponse("Registration Successful"));
     }
