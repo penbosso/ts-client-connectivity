@@ -5,13 +5,16 @@ import com.example.tsclientconnectivity.config.jwt.JwtUtility;
 import com.example.tsclientconnectivity.model.Client;
 import com.example.tsclientconnectivity.model.Portfolio;
 import com.example.tsclientconnectivity.model.TradeAccount;
+import com.example.tsclientconnectivity.reporting.ClientActivity;
 import com.example.tsclientconnectivity.repository.ClientRepository;
 import com.example.tsclientconnectivity.repository.PortfolioRepository;
 import com.example.tsclientconnectivity.repository.TradeAccountRepository;
 import com.example.tsclientconnectivity.viewmodel.ClientLoginRequest;
 import com.example.tsclientconnectivity.viewmodel.ClientRegisterRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 //import javax.validation.Valid;
 
 @RestController
@@ -30,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 //@CrossOrigin(origins = "*", maxAge = 3600)
 public class AccountController {
 
+    private final RestTemplate restTemplate=new RestTemplate();
     ClientRepository clientRepository;
     PortfolioRepository portfolioRepository;
     TradeAccountRepository tradeAccountRepository;
@@ -49,10 +54,19 @@ public class AccountController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
-       // Client userDetails = (Client) authentication.getPrincipal();
+       Client userDetails = (Client) authentication.getPrincipal();
         var headers=new HttpHeaders();
         headers.set("auth_token",jwt);
         System.out.println(viewModel.getEmail() + " " + viewModel.getPassword());
+
+        HttpEntity<ClientActivity> request = new HttpEntity<>(
+                new ClientActivity(userDetails.getId(),
+                        userDetails.getFname() + " " + userDetails.getLname(),
+                        "Login"
+                ));
+        ResponseEntity<ClientActivity> response = restTemplate
+                .exchange("http://localhost:3005/client-report", HttpMethod.POST, request, ClientActivity.class);
+        response.getStatusCodeValue();
         return ResponseEntity.ok().headers(headers).build();
     }
     
@@ -83,11 +97,18 @@ public class AccountController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
-       // Client userDetails = (Client) authentication.getPrincipal();
+        Client userDetails = (Client) authentication.getPrincipal();
         var headers=new HttpHeaders();
         headers.set("auth_token",jwt);
         //ToDo:Log activity with reporting service via post request(param [(clientId, fullName, action=registered, dataTime)])
-
+        HttpEntity<ClientActivity> request = new HttpEntity<>(
+                new ClientActivity(userDetails.getId(),
+                        userDetails.getFname() + " " + userDetails.getLname(),
+                        "Login"
+                ));
+        ResponseEntity<ClientActivity> response = restTemplate
+                .exchange("http://localhost:3005/client-report", HttpMethod.POST, request, ClientActivity.class);
+        response.getStatusCodeValue();
         return ResponseEntity.ok().headers(headers).body(new MessageResponse("Registration Successful"));
     }
 
