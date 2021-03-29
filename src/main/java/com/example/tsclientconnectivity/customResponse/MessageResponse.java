@@ -1,4 +1,4 @@
-package com.example.tsclientconnectivity.CustomControllerResponse;
+package com.example.tsclientconnectivity.customResponse;
 
 public class MessageResponse {
     private String message;

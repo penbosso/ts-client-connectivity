@@ -9,9 +9,10 @@ import javax.persistence.Entity;
 
 @Data @Entity
 public class ClientOrder {
-    @Column(name = "orderId")
+    //i don't know what this table is
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private String orderId;
+    @Column(name = "orderId")
+    private Long orderId;
     @Getter @Setter
     private String side;
     @Getter @Setter
@@ -23,3 +24,5 @@ public class ClientOrder {
     @Getter @Setter @Column(name = "clientId")
     private long clientId;
 }
+//    @Column(name = "orderId")
+//    private String orderId;

@@ -1,25 +1,45 @@
 package com.example.tsclientconnectivity.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.apachecommons.CommonsLog;
 import javax.persistence.*;
 
 import javax.persistence.Column;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@NoArgsConstructor
+@Getter @Setter
+//This is what the client owns in our database
 public class ClientStock {
      @Column(name = "stockId")
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long stockId;
-    @Getter   @Setter
     private String ticker;
-    @Getter   @Setter
     private double price;
-    @Getter   @Setter @Column(name = "stockQuantity")
+      @Column(name = "stockQuantity")
     private int stockQuantity;
-    @Getter   @Setter @Column(name = "clientId")
+      @Column(name = "clientId")
     private long clientId;
-    @Getter   @Setter @Column(name = "portfolioId")
+      @Column(name = "portfolioId")
     private long portfolioId;
 
+    public ClientStock(String ticker, double price, int stockQuantity, long clientId, long portfolioId) {
+        this.ticker = ticker;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.clientId = clientId;
+        this.portfolioId = portfolioId;
+    }
+
+    public static List<ClientStock> createDefaultStock(long clientId, long portfolioId){
+          String[] tics={"IBM","MSFT","TSLA","NFLX","GOOGL","AAPL","ORCL","AMZN"};
+          List<ClientStock> dummy=new ArrayList<>();
+          for(String s:tics){
+             dummy.add(new ClientStock(s,1.05,20,clientId,portfolioId));
+          }
+          return dummy;
+      }
 }
