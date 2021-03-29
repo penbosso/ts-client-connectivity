@@ -15,7 +15,7 @@ public class OrderController {
     @Autowired
     private SoapClient client;
 
-    @PostMapping("/submitorder")
+    @PostMapping("/submit-order")
     public Acknowledgement invokeSoapClientToSubmitClientOrder(@RequestBody(required = true) OrderRequest request) {
         System.out.println(request.toString());
         return client.submitOrder(request);
