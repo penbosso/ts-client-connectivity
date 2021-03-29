@@ -20,6 +20,8 @@ public class ClientOrder {
     @Getter @Setter
     private int quantity;
     @Getter @Setter
+    private int strategy;
+    @Getter @Setter
     private double price;
     @Getter @Setter @Column(name = "clientId")
     private long clientId;
