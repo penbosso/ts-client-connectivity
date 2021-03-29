@@ -8,6 +8,7 @@
                         <xsd:element name="product" type="xsd:string"/>
                         <xsd:element name="side" type="xsd:string"/>
                         <xsd:element name="quantity" type="xsd:int"/>
+                        <xsd:element name="strategy" type="xsd:int"/>
                         <xsd:element name="price" type="xsd:double"/>
                     </xsd:sequence>
                 </xsd:complexType>
@@ -42,8 +43,7 @@
     </wsdl:binding>
     <wsdl:service name="OrderValidityindicatorService">
         <wsdl:port binding="tns:OrderValidityindicatorSoap11" name="OrderValidityindicatorSoap11">
-            <soap:address location="http://ts-order-validation.herokuapp.com/ws"/>
+            <soap:address location="http://localhost:8080/ws"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
-
