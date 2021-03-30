@@ -25,6 +25,20 @@ public class ClientOrder {
     private double price;
     @Getter @Setter @Column(name = "clientId")
     private long clientId;
+    @Getter @Setter @Column(name = "exchangeOrderId")
+    private String exchangeOrderId;
+    @Getter @Setter
+    private String status;
+
+    public ClientOrder(String side, String product, int quantity, int strategy, double price, long clientId, String status) {
+        this.side = side;
+        this.product = product;
+        this.quantity = quantity;
+        this.strategy = strategy;
+        this.price = price;
+        this.clientId = clientId;
+        this.status = status;
+    }
 }
 //    @Column(name = "orderId")
 //    private String orderId;

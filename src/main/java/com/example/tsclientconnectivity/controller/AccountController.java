@@ -15,6 +15,7 @@ import com.example.tsclientconnectivity.viewmodel.ClientLoginRequest;
 import com.example.tsclientconnectivity.viewmodel.ClientRegisterRequest;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,21 +35,26 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/auth")
-@AllArgsConstructor
 //@CrossOrigin(origins = "*", maxAge = 3600)
 public class AccountController {
 
 
-    private final String reportUrl="http://localhost:3005/client-report";
+    @Value("${tradegroup2.app.reportServiceUrl}")
+    private String reportUrl;
     private final RestTemplate restTemplate=new RestTemplate();
+    @Autowired
     ClientRepository clientRepository;
+    @Autowired
     PortfolioRepository portfolioRepository;
+    @Autowired
     TradeAccountRepository tradeAccountRepository;
+    @Autowired
     ClientStockRepository clientStockRepository;
+    @Autowired
     AuthenticationManager authManager;
-
+    @Autowired
     PasswordEncoder encoder;
-
+    @Autowired
     JwtUtility jwtUtils;
 
     @PostMapping("/login")
@@ -115,12 +121,15 @@ public class AccountController {
         HttpEntity<ClientActivity> request = new HttpEntity<>(
                 new ClientActivity(userDetails.getId(),
                         userDetails.getFname() + " " + userDetails.getLname(),
-                        "Login"
+                        "Register"
                 ));
 
-        ResponseEntity<ClientActivity> response = restTemplate
-                .exchange(reportUrl, HttpMethod.POST, request, ClientActivity.class);
-        response.getStatusCodeValue();
+//        ResponseEntity<ClientActivity> response = restTemplate
+//                .exchange(reportUrl, HttpMethod.POST, request, ClientActivity.class);
+//        response.getStatusCodeValue();
+//        ResponseEntity<String> response = restTemplate
+//                .exchange("https://jsonplaceholder.typicode.com/todos/1", HttpMethod.GET,null,String.class);
+//        System.out.println(response.getBody());
         return ResponseEntity.ok().headers(headers).body(new MessageResponse("Registration Successful"));
     }
 

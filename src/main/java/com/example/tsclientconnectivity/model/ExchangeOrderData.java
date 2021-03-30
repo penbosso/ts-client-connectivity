@@ -25,7 +25,7 @@ public class ExchangeOrderData{
     private String exchangeUrl;
     private int quantity;
     /**
-     * this is our generated order id, which maps to the clientorder table's primary key
+     * this is our generated order id, which maps to the client order table's primary key
      */
     @Column(name = "orderId")
     private Long orderId;

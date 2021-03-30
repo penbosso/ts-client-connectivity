@@ -11,4 +11,5 @@ public class PortfolioRequest {
 
     @NotNull
     public String portfolioName;
+    private Long portfolioId;
 }

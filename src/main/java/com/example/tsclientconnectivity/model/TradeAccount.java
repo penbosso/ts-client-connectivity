@@ -16,4 +16,9 @@ public class TradeAccount {
     @Setter @Column(name="clientId")
     private long clientId;
     private double balance;
+    @Column(name="currentBalance")
+    private double currentBalance;
+    @Column(name="actualBalance")
+    private double actualBalance;
+
 }

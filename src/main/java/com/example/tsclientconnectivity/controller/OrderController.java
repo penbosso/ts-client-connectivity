@@ -3,31 +3,51 @@ package com.example.tsclientconnectivity.controller;
 
 import com.example.tsclientconnectivity.client.SoapClient;
 import com.example.tsclientconnectivity.model.Client;
+import com.example.tsclientconnectivity.model.ClientOrder;
 import com.example.tsclientconnectivity.ordervalidation.Acknowledgement;
 import com.example.tsclientconnectivity.ordervalidation.OrderRequest;
+import com.example.tsclientconnectivity.reporting.ClientActivity;
 import com.example.tsclientconnectivity.repository.OrderRepository;
+import com.example.tsclientconnectivity.service.ReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/client-order")
 public class OrderController {
 
+    @Value("${tradegroup2.app.cancelOrderUrl}")
+    private String cancelOrderUrl;
+
     @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
+    ReportingService reportingService;
+
+    @Autowired
     private SoapClient client;
-    //private final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    private final RestTemplate restTemplate=new RestTemplate();
 
     //create order
     @PostMapping()
     public Acknowledgement invokeSoapClientToSubmitClientOrder(@RequestBody(required = true) OrderRequest request) {
-       // System.out.println(request.toString());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var userId=((Client)auth.getPrincipal()).getId();
+        orderRepository.save(new ClientOrder(request.getSide(),request.getProduct(),
+                    request.getQuantity(),request.getStrategy(),request.getPrice(),userId,"Pending"));
         // TODO://report to reporting service
+        reportingService.sendClientActivityToReportingService("Making an order");
         return client.submitOrder(request);
     }
 
@@ -50,23 +70,36 @@ public class OrderController {
     @DeleteMapping("/{orderId")
     public ResponseEntity<Object> cancelOrder(@PathVariable(name = "orderId")Long orderId){
         if(!orderRepository.existsById(orderId)) return ResponseEntity.badRequest().build();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        var userId=((Client)auth.getPrincipal()).getId();
+       // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //var userId=((Client)auth.getPrincipal()).getId();
         //some logic
+        HttpEntity<Object> request = new HttpEntity<>("");
 
-        // TODO://report to reportng service
+        ResponseEntity<String> response = restTemplate
+                .exchange(cancelOrderUrl, HttpMethod.POST,null,String.class);
+
+        // Done://report to reportng service
+        reportingService.sendClientActivityToReportingService(String.format("Cancelling an order with Id= %s",orderId));
         return ResponseEntity.ok().build();
     }
-    //update order
+
+    //update order status
     @PutMapping("/{orderId}")
     public ResponseEntity<Object> updateOrder(@PathVariable(name = "orderId") Long orderId,
                                               @RequestBody OrderRequest request){
         if(!orderRepository.existsById(orderId)) return ResponseEntity.notFound().build();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var userId=((Client)auth.getPrincipal()).getId();
-
         //some logic
         // TODO://report to reportng service
+        reportingService.sendClientActivityToReportingService(String.format("Updating an order with an id= %s",orderId));
         return ResponseEntity.ok(request);
+    }
+    
+    @PutMapping("/market-change")
+    public ResponseEntity<?> marketChange(){
+        Iterable<ClientOrder> orders=orderRepository.findAll();
+
+        return ResponseEntity.ok().build();
     }
 }
