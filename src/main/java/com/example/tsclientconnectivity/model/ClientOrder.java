@@ -29,6 +29,8 @@ public class ClientOrder {
     private String exchangeOrderId;
     @Getter @Setter
     private String status;
+    @Getter @Setter
+    private String exchange;
 
     public ClientOrder(String side, String product, int quantity, int strategy, double price, long clientId, String status) {
         this.side = side;

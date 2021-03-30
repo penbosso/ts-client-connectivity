@@ -7,6 +7,7 @@ import com.example.tsclientconnectivity.model.ClientOrder;
 import com.example.tsclientconnectivity.ordervalidation.Acknowledgement;
 import com.example.tsclientconnectivity.ordervalidation.OrderRequest;
 import com.example.tsclientconnectivity.reporting.ClientActivity;
+import com.example.tsclientconnectivity.repository.ClientExpenditureRepository;
 import com.example.tsclientconnectivity.repository.OrderRepository;
 import com.example.tsclientconnectivity.service.ReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,13 @@ public class OrderController {
     @Value("${tradegroup2.app.cancelOrderUrl}")
     private String cancelOrderUrl;
 
+    @Value("${tradegroup2.app.privateKey}")
+    private String privateKey;
+
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private ClientExpenditureRepository expenditureRepository;
 
     @Autowired
     ReportingService reportingService;
@@ -74,7 +80,7 @@ public class OrderController {
         //var userId=((Client)auth.getPrincipal()).getId();
         //some logic
         HttpEntity<Object> request = new HttpEntity<>("");
-
+        cancelOrderUrl=cancelOrderUrl+orderId;
         ResponseEntity<String> response = restTemplate
                 .exchange(cancelOrderUrl, HttpMethod.POST,null,String.class);
 
@@ -98,8 +104,17 @@ public class OrderController {
     
     @PutMapping("/market-change")
     public ResponseEntity<?> marketChange(){
-        Iterable<ClientOrder> orders=orderRepository.findAll();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var userId=((Client)auth.getPrincipal()).getId();
 
+        List<ClientOrder> orders=orderRepository.findByNotCompletedStatus(userId);
+        String fullPath="";
+        for(ClientOrder order:orders){
+            fullPath=order.getExchange() + "/" + privateKey +"/order/"+order.getExchangeOrderId();
+            ResponseEntity<String> response = restTemplate
+                    .exchange(fullPath, HttpMethod.GET,null,String.class);
+        }
+        //Todo: Data for expenditure table
         return ResponseEntity.ok().build();
     }
 }
