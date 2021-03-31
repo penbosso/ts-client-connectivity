@@ -14,6 +14,7 @@ import com.example.tsclientconnectivity.reporting.ClientActivity;
 import com.example.tsclientconnectivity.repository.ClientStockRepository;
 import com.example.tsclientconnectivity.repository.ClientTransactionRepository;
 import com.example.tsclientconnectivity.repository.OrderRepository;
+import com.example.tsclientconnectivity.repository.TradeAccountRepository;
 import com.example.tsclientconnectivity.service.ReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,8 @@ public class OrderController {
     private ClientTransactionRepository expenditureRepository;
     @Autowired
     private ClientStockRepository clientStockRepository;
+    @Autowired
+    private TradeAccountRepository tradeAccountRepository;
 
     @Autowired
     ReportingService reportingService;
@@ -62,7 +65,13 @@ public class OrderController {
         // TODO://report to reporting service
         reportingService.sendClientActivityToReportingService("Making an order");
 
-        return client.submitOrder(request);
+        var ack= client.submitOrder(request);
+        if(ack.isIsValid()){
+           var user= tradeAccountRepository.findByClientId(userId).get();
+           user.setCurrentBalance(user.getCurrentBalance() - (request.getQuantity()*request.getPrice()));
+           tradeAccountRepository.save(user);
+        }
+        return ack;
     }
 
     //get details about an order
@@ -133,6 +142,9 @@ public class OrderController {
                 orderRepository.save(order);
                 var cs=new ClientStock(order.getProduct(),order.getPrice(),order.getQuantity(),userId,1L);
                 clientStockRepository.save(cs);
+                var user= tradeAccountRepository.findByClientId(userId).get();
+                user.setActualBalance(user.getActualBalance() - (order.getQuantity()*order.getPrice()));
+                tradeAccountRepository.save(user);
                 expenditureRepository.save(ct);
             }
         }

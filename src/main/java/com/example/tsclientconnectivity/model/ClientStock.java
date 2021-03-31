@@ -38,7 +38,7 @@ public class ClientStock {
           String[] tics={"IBM","MSFT","TSLA","NFLX","GOOGL","AAPL","ORCL","AMZN"};
           List<ClientStock> dummy=new ArrayList<>();
           for(String s:tics){
-             dummy.add(new ClientStock(s,1.05,20,clientId,portfolioId));
+             dummy.add(new ClientStock(s,1.05,1000,clientId,portfolioId));
           }
           return dummy;
       }

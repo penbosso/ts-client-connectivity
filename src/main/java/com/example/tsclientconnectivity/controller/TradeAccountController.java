@@ -1,11 +1,14 @@
 package com.example.tsclientconnectivity.controller;
 
 import com.example.tsclientconnectivity.customResponse.BalanceResponse;
+import com.example.tsclientconnectivity.model.Client;
 import com.example.tsclientconnectivity.model.TradeAccount;
 import com.example.tsclientconnectivity.repository.TradeAccountRepository;
 import com.example.tsclientconnectivity.viewmodel.TradeBalanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -14,6 +17,16 @@ import org.springframework.web.bind.annotation.*;
 public class TradeAccountController {
     @Autowired
     TradeAccountRepository tradeAccountRepository;
+
+    @GetMapping
+    public ResponseEntity<Object> getAllBalance(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var userId=((Client)auth.getPrincipal()).getId();
+        var balance=(tradeAccountRepository.findByClientId(userId));
+        if(balance.isEmpty()) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(balance.get());
+    }
 
     @GetMapping("/current/{clientId}")
     public ResponseEntity<Object> getCurrentBalance(@PathVariable("clientId")Long clientId){
