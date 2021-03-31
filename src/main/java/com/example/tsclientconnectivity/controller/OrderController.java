@@ -3,11 +3,14 @@ package com.example.tsclientconnectivity.controller;
 
 import com.example.tsclientconnectivity.client.SoapClient;
 import com.example.tsclientconnectivity.model.Client;
+
 import com.example.tsclientconnectivity.model.ClientOrder;
+import com.example.tsclientconnectivity.model.ClientTransaction;
 import com.example.tsclientconnectivity.ordervalidation.Acknowledgement;
 import com.example.tsclientconnectivity.ordervalidation.OrderRequest;
 import com.example.tsclientconnectivity.reporting.ClientActivity;
-import com.example.tsclientconnectivity.repository.ClientExpenditureRepository;
+
+import com.example.tsclientconnectivity.repository.ClientTransactionRepository;
 import com.example.tsclientconnectivity.repository.OrderRepository;
 import com.example.tsclientconnectivity.service.ReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +38,7 @@ public class OrderController {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
-    private ClientExpenditureRepository expenditureRepository;
+    private ClientTransactionRepository expenditureRepository;
 
     @Autowired
     ReportingService reportingService;
@@ -54,6 +57,7 @@ public class OrderController {
                     request.getQuantity(),request.getStrategy(),request.getPrice(),userId,"Pending"));
         // TODO://report to reporting service
         reportingService.sendClientActivityToReportingService("Making an order");
+
         return client.submitOrder(request);
     }
 
@@ -113,6 +117,18 @@ public class OrderController {
             fullPath=order.getExchange() + "/" + privateKey +"/order/"+order.getExchangeOrderId();
             ResponseEntity<String> response = restTemplate
                     .exchange(fullPath, HttpMethod.GET,null,String.class);
+            if(response.getStatusCodeValue() == 500 ){
+
+                var ct=new ClientTransaction(order.getClientId(),order.getOrderId());
+                if(order.getSide().equalsIgnoreCase("BUY")){
+                    ct.setAmount(-1*(order.getPrice()*order.getQuantity()));
+                }else if(order.getSide().equalsIgnoreCase("SELL")){
+                    ct.setAmount(order.getPrice()*order.getQuantity());
+                }
+                order.setStatus("Completed");
+                orderRepository.save(order);
+                expenditureRepository.save(ct);
+            }
         }
         //Todo: Data for expenditure table
         return ResponseEntity.ok().build();

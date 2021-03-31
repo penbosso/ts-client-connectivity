@@ -11,6 +11,8 @@ import com.example.tsclientconnectivity.model.Client;
 
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtility {
@@ -25,8 +27,12 @@ public class JwtUtility {
     public String generateJwtToken(Authentication authentication) {
 
         Client userPrincipal = (Client) authentication.getPrincipal();
-
+        var claims=new HashMap<String,Object>();
+        claims.put("clientId",userPrincipal.getId());
+        claims.put("fname",userPrincipal.getFname());
+        claims.put("lname",userPrincipal.getLname());
         return Jwts.builder()
+                .addClaims(claims)
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
                 .setAudience("http://tlc3.turntabl.io")
