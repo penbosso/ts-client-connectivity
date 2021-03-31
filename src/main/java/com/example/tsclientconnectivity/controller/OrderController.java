@@ -5,11 +5,13 @@ import com.example.tsclientconnectivity.client.SoapClient;
 import com.example.tsclientconnectivity.model.Client;
 
 import com.example.tsclientconnectivity.model.ClientOrder;
+import com.example.tsclientconnectivity.model.ClientStock;
 import com.example.tsclientconnectivity.model.ClientTransaction;
 import com.example.tsclientconnectivity.ordervalidation.Acknowledgement;
 import com.example.tsclientconnectivity.ordervalidation.OrderRequest;
 import com.example.tsclientconnectivity.reporting.ClientActivity;
 
+import com.example.tsclientconnectivity.repository.ClientStockRepository;
 import com.example.tsclientconnectivity.repository.ClientTransactionRepository;
 import com.example.tsclientconnectivity.repository.OrderRepository;
 import com.example.tsclientconnectivity.service.ReportingService;
@@ -39,6 +41,8 @@ public class OrderController {
     private OrderRepository orderRepository;
     @Autowired
     private ClientTransactionRepository expenditureRepository;
+    @Autowired
+    private ClientStockRepository clientStockRepository;
 
     @Autowired
     ReportingService reportingService;
@@ -127,6 +131,8 @@ public class OrderController {
                 }
                 order.setStatus("Completed");
                 orderRepository.save(order);
+                var cs=new ClientStock(order.getProduct(),order.getPrice(),order.getQuantity(),userId,1L);
+                clientStockRepository.save(cs);
                 expenditureRepository.save(ct);
             }
         }

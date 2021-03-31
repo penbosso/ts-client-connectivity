@@ -28,12 +28,13 @@ public class JwtUtility {
 
         Client userPrincipal = (Client) authentication.getPrincipal();
         var claims=new HashMap<String,Object>();
-        claims.put("clientId",userPrincipal.getId());
+        claims.put("email",userPrincipal.getEmail());
         claims.put("fname",userPrincipal.getFname());
         claims.put("lname",userPrincipal.getLname());
+        claims.put("id",userPrincipal.getId());
         return Jwts.builder()
                 .addClaims(claims)
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject(userPrincipal.getEmail())
                 .setIssuedAt(new Date())
                 .setAudience("http://tlc3.turntabl.io")
                 .setIssuer("http://tlc3group3.turntabl.io")
