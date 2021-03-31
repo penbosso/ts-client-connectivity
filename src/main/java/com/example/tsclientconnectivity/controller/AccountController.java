@@ -121,12 +121,9 @@ public class AccountController {
                         "Register"
                 ));
 
-//        ResponseEntity<ClientActivity> response = restTemplate
-//                .exchange(reportUrl, HttpMethod.POST, request, ClientActivity.class);
-//        response.getStatusCodeValue();
-//        ResponseEntity<String> response = restTemplate
-//                .exchange("https://jsonplaceholder.typicode.com/todos/1", HttpMethod.GET,null,String.class);
-//        System.out.println(response.getBody());
+        ResponseEntity<ClientActivity> response = restTemplate
+                .exchange(reportUrl, HttpMethod.POST, request, ClientActivity.class);
+
         return ResponseEntity.ok().headers(headers).body(new MessageResponse("Registration Successful"));
     }
 
